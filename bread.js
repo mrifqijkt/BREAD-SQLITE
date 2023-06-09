@@ -16,15 +16,41 @@ app.use(bodyParser.json())
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
-    const page = (req.query.page)
+    const page = req.query.page || 1
     const limit = 3
     const offset = (page - 1) * limit
-    db.all('SELECT * FROM bread limit $1 offset $2', [limit, offset], (err, rows) => {
-        if (err) {
-            console.error(err);
-        } else {
-            res.render('index', { bread: rows })
+
+    const params = []
+    const sqlsearch = []
+
+    if (req.query.nama) {
+        params.push(req.query.nama)
+        sqlsearch.push(`nama ilike $${params.length}`)
+    }
+    let sql = 'SELECT COUNT(*) AS count FROM bread'
+    if (params.length > 0) {
+        sql += `where ${sqlsearch.join('and')} `
+    }
+    console.log(sql)
+    db.all(sql, params, (err, bread) => {
+        const pages = Math.ceil(bread[0].count / limit)
+
+        sql = 'SELECT * FROM bread'
+        if (params.length > 0) {
+            sql += `where ${sqlsearch.join('and')}`
         }
+        params.push(limit, offset)
+        sql += `limit $${params.length - 1} offset $${params.length}`
+
+        console.log(sql)
+
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+                console.error(err);
+            } else {
+                res.render('index', { bread: rows, pages, page })
+            }
+        })
     })
 })
 

@@ -13,65 +13,66 @@
     <h1>BREAD(Browse,Read,Edit,Add,Delete)</h1>
     <h2>Filters </h2>
     <div class="container">
-        <div class="row">
-            <div class="col-25">
-                <label for="id">ID</label>
+        <form action="" method="get">
+            <div class="row">
+                <div class="col-25">
+                    <label for="id">ID</label>
+                </div>
+                <div class="col-75">
+                    <input type="text" id="id" name="id" placeholder="ID">
+                </div>
             </div>
-            <div class="col-75">
-                <input type="text" id="id" name="id" placeholder="ID">
+            <div class="row">
+                <div class="col-25">
+                    <label for="string">String</label>
+                </div>
+                <div class="col-75">
+                    <input type="text" id="string" name="String" placeholder="String">
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-25">
-                <label for="string">String</label>
+            <div class="row">
+                <div class="col-25">
+                    <label for="integer">Integer</label>
+                </div>
+                <div class="col-75">
+                    <input type="number" id="integer" name="Integer" placeholder="Integer">
+                </div>
             </div>
-            <div class="col-75">
-                <input type="text" id="string" name="String" placeholder="String">
+            <div class="row">
+                <div class="col-25">
+                    <label for="float">Float</label>
+                </div>
+                <div class="col-75">
+                    <input type="number" id="float" name="Float" placeholder="Float">
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-25">
-                <label for="integer">Integer</label>
+            <div class="row">
+                <div class="col-25">
+                    <label for="date">Date</label>
+                </div>
+                <div class="col-75">
+                    <input style="width: 20%;" type="date" id="date" name="Date" placeholder="start date">
+                    <br>to
+                    <br>
+                    <input style="width: 20%;" type="date" id="date" name="Date" placeholder="end date">
+                </div>
             </div>
-            <div class="col-75">
-                <input type="number" id="integer" name="Integer" placeholder="Integer">
+            <div class="row">
+                <div class="col-25">
+                    <label for="boolean">Boolean</label>
+                </div>
+                <div class="col-75">
+                    <select style="background-color: white;" id="boolean" name="Boolean">
+                        <option value="">Choose the boolean...</option>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-25">
-                <label for="float">Float</label>
+            <br>
+            <div class="row">
+                <button class="add">Search</button>
             </div>
-            <div class="col-75">
-                <input type="number" id="float" name="Float" placeholder="Float">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-25">
-                <label for="date">Date</label>
-            </div>
-            <div class="col-75">
-                <input style="width: 20%;" type="text" id="date" name="Date" placeholder="start date">
-                <br>to
-                <br>
-                <input style="width: 20%;" type="text" id="date" name="Date" placeholder="end date">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-25">
-                <label for="boolean">Boolean</label>
-            </div>
-            <div class="col-75">
-                <select style="background-color: white;" id="boolean" name="Boolean">
-                    <option value="">Choose the boolean...</option>
-                    <option value="true">True</option>
-                    <option value="false">False</option>
-                </select>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <a class="add" href="">Search</a>
-        </div>
         </form>
     </div>
     <table border="1" id="customers">
@@ -113,10 +114,12 @@
     <br>
     <div class="pagination">
         <a href="#">Previous</a>
-        <a class="active" href="#">1</a>
-        <a href="#">2</a>
-        <a href="#">3</a>
-        <a href="#">Next</a>
+        <% for(let i=1; i <=pages; i++){ %>
+            <a class="<%= page == i ? 'active' : '' %>" href="/?page=<%= i %>">
+                <%= i %>
+            </a>
+            <% } %>
+                <a href="#">Next</a>
     </div>
     <br>
     <br>
