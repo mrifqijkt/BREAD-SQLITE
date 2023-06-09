@@ -87,7 +87,7 @@
         <% bread.forEach((item, index)=> { %>
             <tr>
                 <td>
-                    <%= index + 1 %>
+                    <%= item.id %>
                 </td>
                 <td>
                     <%= item.String %>
@@ -104,8 +104,8 @@
                 <td>
                     <%= item.Boolean %>
                 </td>
-                <td><a class="button" href="/ubah/<%= index %>">Edit</a> &nbsp;
-                    <a class="button button2" href="/hapus/<%= index %>">Delete</a>
+                <td><a class="button" href="/ubah/<%= item.id %>">Edit</a> &nbsp;
+                    <a class="button button2" href="/hapus/<%= item.id %>">Delete</a>
                 </td>
             </tr>
             <% }) %>
