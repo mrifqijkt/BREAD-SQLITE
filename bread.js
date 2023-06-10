@@ -16,43 +16,74 @@ app.use(bodyParser.json())
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
-    const page = req.query.page || 1
-    const limit = 3
-    const offset = (page - 1) * limit
+    const url = req.url == '/' ? '/?page=1' : req.url
 
+
+    let sql = 'SELECT COUNT(*) AS count FROM bread'
     const params = []
     const sqlsearch = []
 
-    if (req.query.nama) {
-        params.push(req.query.nama)
-        sqlsearch.push(`nama ilike $${params.length}`)
+    if (req.query.id && req.query.checkboxid) {
+        params.push(req.query.id)
+        sqlsearch.push(`id = $${params.length}`)
     }
-    let sql = 'SELECT COUNT(*) AS count FROM bread'
-    if (params.length > 0) {
-        sql += `where ${sqlsearch.join('and')} `
-    }
-    console.log(sql)
-    db.all(sql, params, (err, bread) => {
-        const pages = Math.ceil(bread[0].count / limit)
 
+    if (req.query.String && req.query.checkboxString) {
+        params.push(`%${req.query.String}%`);
+        sqlsearch.push(`String LIKE $${params.length}`)
+    }
+
+    if (req.query.Integer && req.query.checkboxInteger) {
+        params.push(req.query.Integer)
+        sqlsearch.push(`Integer = $${params.length}`)
+    }
+
+    if (req.query.Float && req.query.checkboxFloat) {
+        params.push(req.query.Float)
+        sqlsearch.push(`Float = $${params.length}`)
+    }
+
+    if (req.query.startDate && req.query.endDate && req.query.checkboxDate) {
+        params.push(req.query.startDate, req.query.endDate)
+        // console.log(params)
+        sqlsearch.push(`Date BETWEEN $${params.length - 1} AND $${params.length}`)
+    }
+
+    if (req.query.Boolean && req.query.checkboxBoolean) {
+        params.push(req.query.Boolean)
+        sqlsearch.push(`Boolean = $${params.length}`)
+    }
+
+    if (params.length > 0) {
+        sql += ` WHERE ${sqlsearch.join(' AND ')}`
+    }
+        // console.log(sql)
+    db.get(sql, params, (err, bread) => {
+        // console.log(bread.count[0])
+        const page = req.query.page || 1
+        const limit = 3
+        const offset = (page - 1) * limit
+        const pages = Math.ceil(bread.count / limit)
+        // console.log(pages)
         sql = 'SELECT * FROM bread'
         if (params.length > 0) {
-            sql += `where ${sqlsearch.join('and')}`
+            sql += ` WHERE ${sqlsearch.join(' AND ')}`
         }
         params.push(limit, offset)
-        sql += `limit $${params.length - 1} offset $${params.length}`
-
-        console.log(sql)
-
+        sql += ` LIMIT $${params.length - 1} OFFSET $${params.length}`
+        // console.log(params)
         db.all(sql, params, (err, rows) => {
             if (err) {
-                console.error(err);
+                console.error(err)
+                return res.status(500).send('Internal Server Error')
             } else {
-                res.render('index', { bread: rows, pages, page })
+                res.render('index', { bread: rows, pages, page, offset, query: req.query, url})
             }
+
         })
     })
 })
+
 
 app.get('/Add', (req, res) => {
     res.render('add')
